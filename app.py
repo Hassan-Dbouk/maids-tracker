@@ -5,11 +5,15 @@ from datetime import datetime, timedelta
 import plotly.graph_objects as go
 import os
 
-# Set Google Credentials (only if running locally)
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "data-driven-attributes-957b43d1be08.json"
+from google.oauth2 import service_account
+import json
 
-# Initialize BigQuery client
-client = bigquery.Client()
+# Load credentials from Streamlit secrets
+service_account_info = st.secrets["gcp_key"]
+credentials = service_account.Credentials.from_service_account_info(service_account_info)
+
+client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+
 
 # --- Loaders ---
 @st.cache_data(ttl=3600)
